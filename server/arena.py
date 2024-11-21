@@ -1,9 +1,14 @@
 import time
 from character import Character
+from metrics import Metrics
 
 class Arena:
-  def __init__(self, min_player_to_start: int = 2) -> None:
+  def __init__(self, id: str, min_player_to_start: int = 2) -> None:
+    self.id = id
+
     self.min_player_to_start = min_player_to_start
+
+    self.metrics = Metrics()
 
     self.turn = 0
     self.characters = []
@@ -20,7 +25,7 @@ class Arena:
 
   def remove_character(self, id: str) -> None:
     print(f"Character {id} has been removed")
-    self.characters = self.characters.filter(lambda character: character.id != id)
+    self.characters = filter(lambda character: character.id != id, self.characters)
 
   def leave_character(self, id: str) -> None:
     self.leavers.append(id)
@@ -46,6 +51,14 @@ class Arena:
   def everyone_has_an_action(self) -> bool:
     return all([character.action for character in self.characters])
   
+  def update_metrics(self):
+    life = dict(map(lambda item: (item.id, item.statistics.life), self.characters))
+
+    self.metrics.push_metric("golds", { [self.id]: sum(self.golds.values()) })
+
+    self.metrics.push_metric("alive", len(self.characters))
+    self.metrics.push_metric("life", life)
+    
   def exec(self) -> None:
     self.turn += 1
     characters = sorted(self.characters, key=lambda character: character.statistics.speed)
@@ -67,6 +80,8 @@ class Arena:
 
     while self.run:
       time.sleep(.5)
+
+      self.update_metrics()
 
       if self.is_ready():
         self.exec()
