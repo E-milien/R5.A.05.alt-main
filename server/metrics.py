@@ -25,10 +25,10 @@ class Metrics:
 		v = {}
 		v[metric] = value
 
-		self.push_metrics(metric, json.dumps(v).encode('utf-8'))
+		self.push_metrics(metric, v)
 
 	def push_metrics(self, metric, values):
 		print(metric, values)
 
-		self.producer.send(metric, values)
+		self.producer.send(metric, json.dumps(values).encode('utf-8'))
 		self.producer.flush(timeout=10)

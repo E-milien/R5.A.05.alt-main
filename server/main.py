@@ -9,7 +9,7 @@ from threading import Thread
 if __name__ == "__main__":
   load_dotenv() 
 
-  arena = Arena()
+  arena = Arena("arena-1")
   api = API(arena)
 
   thread = Thread(target = arena.loop)

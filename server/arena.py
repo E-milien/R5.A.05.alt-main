@@ -25,7 +25,7 @@ class Arena:
 
   def remove_character(self, id: str) -> None:
     print(f"Character {id} has been removed")
-    self.characters = filter(lambda character: character.id != id, self.characters)
+    # self.characters = filter(lambda character: character.id != id, self.characters)
 
   def leave_character(self, id: str) -> None:
     self.leavers.append(id)
@@ -54,10 +54,10 @@ class Arena:
   def update_metrics(self):
     life = dict(map(lambda item: (item.id, item.statistics.life), self.characters))
 
-    self.metrics.push_metric("golds", { [self.id]: sum(self.golds.values()) })
+    self.metrics.push_metrics("golds", { self.id: sum(self.golds.values()) })
+    self.metrics.push_metrics("life", life)
 
     self.metrics.push_metric("alive", len(self.characters))
-    self.metrics.push_metric("life", life)
     
   def exec(self) -> None:
     self.turn += 1

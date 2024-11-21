@@ -35,5 +35,8 @@ class Character:
     return {
       "id": self.id,
       "statistics": self.statistics.to_dict(),
+
+      "is_dead": self.is_dead(),
+
       "action": self.action.to_dict() if self.action else None
     }
