@@ -15,9 +15,11 @@ class Arena:
     self.run = False
 
   def add_character(self, character: Character) -> None:
+    print(f"Character {character.id} has been connected")
     self.characters.append(character)
 
   def remove_character(self, id: str) -> None:
+    print(f"Character {id} has been removed")
     self.characters = self.characters.filter(lambda character: character.id != id)
 
   def leave_character(self, id: str) -> None:
@@ -27,6 +29,13 @@ class Arena:
     for character in self.characters:
       if character.id == id:
         return character
+      
+  def give_golds(self, character_id: str, value: int):
+    if character_id not in self.golds:
+      self.golds[character_id] = 0
+
+    print(f"Character {id} give {value} golds")
+    self.golds[character_id] += value
 
   def is_ready(self) -> bool:
     return self.has_required_number_of_characters() and self.everyone_has_an_action()
@@ -48,7 +57,6 @@ class Arena:
       character.action.do(self)
 
     for leaver in self.leavers:
-      print("Character leave the arena", leaver)
       self.remove_character(leaver)
 
     for character in characters:

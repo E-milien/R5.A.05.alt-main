@@ -30,12 +30,12 @@ class Action:
       return
 
     if self.type == ActionType.HIT:
-      self.hit(source_character, target_character)
+      self.hit(arena, source_character, target_character)
 
     if self.type == ActionType.FLY:
       arena.leave_character(self.source)
 
-  def hit(self, source, target) -> None:
+  def hit(self, arena, source, target) -> None:
     if target.action.type == ActionType.BLOCK:
       reduce_damage = ( 1 - (target.statistics.armor / (target.statistics.armor + 8)) ) * source.statistics.strength
       target.statistics.life -= reduce_damage
@@ -51,6 +51,9 @@ class Action:
       return
 
     target.statistics.life -= source.statistics.strength
+
+    if target.is_dead():
+      arena.give_golds(source.id, 10)
     
   def to_dict(self):
     return {
