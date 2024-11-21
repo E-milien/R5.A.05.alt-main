@@ -7,6 +7,15 @@ class Statistics:
     self.armor = armor
     self.speed = speed
 
+  def to_dict(self):
+    return {
+      "life": self.life,
+      "strength": self.strength,
+      "armor": self.armor,
+      "speed": self.speed,
+    }
+
+
 class Character:
   def __init__(self, id: str, statistics: Statistics) -> None:
     self.id = id
@@ -22,4 +31,10 @@ class Character:
 
   def reset(self):
     self.action = None
-    
+
+  def to_dict(self):
+    return {
+      "id": self.id,
+      "statistics": self.statistics.to_dict(),
+      "action": self.action.to_dict() if self.action else None
+    }

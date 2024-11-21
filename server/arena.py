@@ -1,3 +1,4 @@
+import time
 from character import Character
 
 class Arena:
@@ -28,34 +29,45 @@ class Arena:
         return character
 
   def is_ready(self) -> bool:
-    return self.has_required_number_of_players() and self.everyone_has_an_action()
+    return self.has_required_number_of_characters() and self.everyone_has_an_action()
 
-  def has_required_number_of_players(self) -> bool:
+  def has_required_number_of_characters(self) -> bool:
     return len(self.characters) >= self.min_player_to_start
 
   def everyone_has_an_action(self) -> bool:
-    return all([player.statistics.action for player in self.players])
+    return all([character.action for character in self.characters])
   
   def exec(self) -> None:
     self.turn += 1
     characters = self.characters.sort(key=lambda character: character.statistics.speed)
 
     print("Run turn", self.turn)
-    print("Characters count is", len(characters))
+    print("Characters count is", len(self.characters))
 
-    for character in characters:
+    for character in self.characters:
       character.action.do(self)
 
     for leaver in self.leavers:
       print("Character leave the arena", leaver)
       self.remove_character(leaver)
 
-    for character in characters:
+    for character in self.characters:
       character.reset()
 
-  def run(self) -> None:
+  def loop(self) -> None:
     self.run = True
 
-    while(self.run):
+    while self.run:
+      time.sleep(.5)
+
       if self.is_ready():
         self.exec()
+
+  def to_dict(self):
+    return {
+      "turn": self.turn,
+      "characters": [character.to_dict() for character in self.characters],
+      
+      "leavers": self.leavers,
+      "golds": self.golds,
+    }

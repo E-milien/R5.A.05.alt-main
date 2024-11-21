@@ -15,16 +15,18 @@ class API:
     
     @self.app.route('/state', methods=['GET'])
     def get_current_state():
-      return jsonify(arena.__dict__)
+      json = arena.to_dict()
+      return jsonify(json)
     
     @self.app.route('/characters', methods=['GET'])
     def get_characters():
-      return jsonify(arena.characters)
+      json = arena.to_dict()['characters']
+      return jsonify(json)
 
     @self.app.route('/characters/<character_id>', methods=['GET'])
     def get_character(character_id: int):
       character = arena.get_character(character_id)
-      return jsonify(character)
+      return jsonify(character.to_dict())
     
     @self.app.route('/characters/<character_id>/join', methods=['POST'])
     def character_join(character_id: int):
@@ -42,7 +44,7 @@ class API:
 
       arena.add_character(character)
 
-      return True
+      return {}, 200
 
     @self.app.route('/characters/<character_id>/action', methods=['POST'])
     def character_action(character_id: int):
@@ -51,12 +53,14 @@ class API:
       character = arena.get_character(character_id)
 
       type = data['type']
-      target = data['target']
+      target = data['target'] if 'target' in data else None
 
       actionType = ActionType.from_str(type)
       action = Action(actionType, character_id, target)
 
       character.prepare_action(action)
+
+      return {}, 200
 
   def start(self):
     self.app.run()

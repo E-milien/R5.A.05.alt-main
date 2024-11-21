@@ -37,7 +37,7 @@ class Action:
 
   def hit(self, source, target) -> None:
     if target.action.type == ActionType.BLOCK:
-      reduce_damage = ( 1 - (target.armor / (target.armor + 8)) ) * source.strength
+      reduce_damage = ( 1 - (target.statistics.armor / (target.statistics.armor + 8)) ) * source.statistics.strength
       target.statistics.life -= reduce_damage
 
       return
@@ -45,10 +45,16 @@ class Action:
     if target.action.type == ActionType.DODGE:
       random = randint(0, 25)
 
-      if random > target.speed:
-        target.statistics.life -= source.strength
+      if random > target.statistics.speed:
+        target.statistics.life -= source.statistics.strength
 
       return
 
-    target.statistics.life -= source.strength
+    target.statistics.life -= source.statistics.strength
     
+  def to_dict(self):
+    return {
+      "action": self.type.name,
+      "source": self.source,
+      "target": self.target
+    }
