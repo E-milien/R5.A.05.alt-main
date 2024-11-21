@@ -39,19 +39,19 @@ class Arena:
   
   def exec(self) -> None:
     self.turn += 1
-    characters = self.characters.sort(key=lambda character: character.statistics.speed)
+    characters = sorted(self.characters, key=lambda character: character.statistics.speed)
 
     print("Run turn", self.turn)
-    print("Characters count is", len(self.characters))
+    print("Characters count is", len(characters))
 
-    for character in self.characters:
+    for character in characters:
       character.action.do(self)
 
     for leaver in self.leavers:
       print("Character leave the arena", leaver)
       self.remove_character(leaver)
 
-    for character in self.characters:
+    for character in characters:
       character.reset()
 
   def loop(self) -> None:
