@@ -15,7 +15,6 @@ class Statistics:
       "speed": self.speed,
     }
 
-
 class Character:
   def __init__(self, id: str, statistics: Statistics) -> None:
     self.id = id
