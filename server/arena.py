@@ -1,6 +1,6 @@
 import time
 from character import Character
-from metrics import Metrics
+#from metrics import Metrics
 
 class Arena:
   def __init__(self, id: str, min_player_to_start: int = 2) -> None:
@@ -8,7 +8,7 @@ class Arena:
 
     self.min_player_to_start = min_player_to_start
 
-    self.metrics = Metrics()
+    #self.metrics = Metrics()
 
     self.turn = 0
     self.characters = []
@@ -81,7 +81,7 @@ class Arena:
     while self.run:
       time.sleep(.5)
 
-      self.update_metrics()
+      #self.update_metrics()
 
       if self.is_ready():
         self.exec()
