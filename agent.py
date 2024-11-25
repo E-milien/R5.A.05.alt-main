@@ -31,24 +31,21 @@ class Agent:
           print("Le total n'est pas égal à 20. Veuillez réessayer.")
           
     self.character_id = str(randint(10000,99999))
-    self.join()
-    
-  def join(self):
     response = requests.post(f"{self.API_URL}/characters/{self.character_id}/join", json = {
       'life':self.life,
       'strength':self.strength,
       'armor':self.armor,
       'speed':self.speed
     })
+    
+    
 
   def do_action(self):
     x = requests.get(f"{self.API_URL}/characters/{self.character_id}")
-    if x.json()['is_dead']:
-      self.join()
-      
+    print(f"{self.character_id} is {'dead' if x.json()['is_dead'] else 'alive'}")  
+            
     if self.auto:
-      #action = choice(list(ActionType))
-      action=ActionType(0)
+      action = choice(list(ActionType))
       responseCharacters = requests.get(f"{self.API_URL}/characters")
       listCharacters = responseCharacters.json()
       target_id = self.character_id
@@ -93,8 +90,10 @@ def play(auto = True):
     while True:
       perso1.do_action()
       perso2.do_action()
-      print("debug")
-      input()
+      x = requests.get('http://127.0.0.1:5000/state')
+      print(x.text)
+      input("fin du tour")
+      
   else:
     listPlayer = []
     numPlayer = int(input("nombre d'agent :"))

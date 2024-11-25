@@ -19,7 +19,8 @@ class Character:
   def __init__(self, id: str, statistics: Statistics) -> None:
     self.id = id
     self.statistics = statistics
-
+    self.damage_dealt = 0
+    self.damage_taken = 0
     self.action = None
 
   def is_dead(self) -> bool:
@@ -35,6 +36,9 @@ class Character:
     return {
       "id": self.id,
       "statistics": self.statistics.to_dict(),
+
+      "damage_dealt": self.damage_dealt,
+      "damage_taken": self.damage_taken,
 
       "is_dead": self.is_dead(),
 

@@ -39,7 +39,8 @@ class Action:
     if target.action.type == ActionType.BLOCK:
       reduce_damage = ( 1 - (target.statistics.armor / (target.statistics.armor + 8)) ) * source.statistics.strength
       target.statistics.life -= reduce_damage
-
+      source.damage_dealt += reduce_damage
+      target.damage_taken += reduce_damage
       return
 
     if target.action.type == ActionType.DODGE:
@@ -47,10 +48,14 @@ class Action:
 
       if random > target.statistics.speed:
         target.statistics.life -= source.statistics.strength
+        source.damage_dealt += source.statistics.strength
+        target.damage_taken += source.statistics.strength
 
       return
 
     target.statistics.life -= source.statistics.strength
+    source.damage_dealt += source.statistics.strength
+    target.damage_taken += source.statistics.strength
 
     if target.is_dead():
       arena.give_golds(source.id, 10)

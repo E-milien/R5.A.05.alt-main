@@ -26,6 +26,10 @@ class API:
     @self.app.route('/characters/<character_id>', methods=['GET'])
     def get_character(character_id: int):
       character = arena.get_character(character_id)
+      
+      if not character:
+        return {}, 200
+      
       return jsonify(character.to_dict())
     
     @self.app.route('/characters/<character_id>/join', methods=['POST'])
@@ -44,6 +48,11 @@ class API:
 
       arena.add_character(character)
 
+      return {}, 200
+    
+    @self.app.route('/characters/<character_id>/leave', methods=['DELETE'])
+    def character_leave(character_id: int): 
+      arena.remove_character(character_id)
       return {}, 200
 
     @self.app.route('/characters/<character_id>/action', methods=['POST'])

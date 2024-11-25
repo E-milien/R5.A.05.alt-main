@@ -25,7 +25,7 @@ class Arena:
 
   def remove_character(self, id: str) -> None:
     print(f"Character {id} has been removed")
-    # self.characters = filter(lambda character: character.id != id, self.characters)
+    self.characters = list(filter(lambda character: character.id != id, self.characters))
 
   def leave_character(self, id: str) -> None:
     self.leavers.append(id)
@@ -44,6 +44,15 @@ class Arena:
 
   def is_ready(self) -> bool:
     return self.has_required_number_of_characters() and self.everyone_has_an_action()
+
+  def is_finished(self) -> bool:
+    number_alive = 0
+    
+    for character in self.characters:
+      if not character.is_dead():
+        number_alive += 1
+        
+    return number_alive <= 1
 
   def has_required_number_of_characters(self) -> bool:
     return len(self.characters) >= self.min_player_to_start
@@ -67,7 +76,8 @@ class Arena:
     print("Characters count is", len(characters))
 
     for character in characters:
-      character.action.do(self)
+      if not character.is_dead():
+        character.action.do(self)
 
     for leaver in self.leavers:
       self.remove_character(leaver)
@@ -79,7 +89,7 @@ class Arena:
     self.run = True
 
     while self.run:
-      time.sleep(.5)
+      time.sleep(.01)
 
       #self.update_metrics()
 
@@ -89,6 +99,8 @@ class Arena:
   def to_dict(self):
     return {
       "turn": self.turn,
+      "is_finished": self.is_finished(),
+      
       "characters": [character.to_dict() for character in self.characters],
       
       "leavers": self.leavers,
