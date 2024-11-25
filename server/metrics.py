@@ -1,7 +1,7 @@
 import os
 import json
 
-from kafka import KafkaProducer
+# from kafka import KafkaProducer
 
 class Metrics:
 	KAFKA_URL = os.environ.get("KAFKA_URL", "localhost:29092")
@@ -9,26 +9,14 @@ class Metrics:
 	def __init__(self) -> None:
 		print("Kafka", self.KAFKA_URL)
 
-		self.producer = KafkaProducer(bootstrap_servers = [self.KAFKA_URL])
-		self.metrics = {}
+		# self.producer = KafkaProducer(bootstrap_servers = [self.KAFKA_URL])
 
-	def increment_metric(self, metric, value):
-		if metric not in self.metrics:
-			self.metrics[metric] = 0
+	def push_events(self, event, arena):
+		# self.producer.send("event", json.dumps({ 'event': event, 'arena': arena }).encode('utf-8'))
+		# self.producer.flush(timeout=10)
+		return
 
-		self.metrics[metric] += value
-
-		value = self.metrics[metric]
-		self.push_metric(metric, value)
-
-	def push_metric(self, metric, value):
-		v = {}
-		v[metric] = value
-
-		self.push_metrics(metric, v)
-
-	def push_metrics(self, metric, values):
-		print(metric, values)
-
-		self.producer.send(metric, json.dumps(values).encode('utf-8'))
-		self.producer.flush(timeout=10)
+	def push_metric(self, metric, arena, data):
+		# self.producer.send("metrics", json.dumps({ 'metric': metric, 'arena': arena, 'data': data }).encode('utf-8'))
+		# self.producer.flush(timeout=10)
+		return

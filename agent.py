@@ -43,8 +43,8 @@ class Agent:
 
   def do_action(self):
     x = requests.get(f"{self.API_URL}/characters/{self.character_id}")
-    if x.json()['is_dead']:
-      self.join()
+    # if x.json()['is_dead']:
+    #   self.join()
       
     if self.auto:
       #action = choice(list(ActionType))

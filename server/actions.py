@@ -53,7 +53,8 @@ class Action:
     target.statistics.life -= source.statistics.strength
 
     if target.is_dead():
-      arena.give_golds(source.id, 10)
+      arena.metrics.push_metric('kill', arena.id, { 'source': source.id })
+      arena.metrics.push_metric('gold_reward', arena.id, { 'source': source.id })
     
   def to_dict(self):
     return {

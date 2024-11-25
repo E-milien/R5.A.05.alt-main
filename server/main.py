@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+import os
 
 from arena import Arena
 from api import API
@@ -9,15 +10,22 @@ from threading import Thread
 if __name__ == "__main__":
   load_dotenv() 
 
-  arena = Arena("arena-1")
+  id = os.environ.get("ARENA", "arena")
+
+  arena = Arena(id)
   api = API(arena)
 
-  thread = Thread(target = arena.loop)
-  thread.daemon = True
+  main_thread = Thread(target = arena.main_loop)
+  main_thread.daemon = True
+
+  check_thread = Thread(target = arena.check_loop)
+  check_thread.daemon = True
 
   signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-  thread.start()
+  main_thread.start()
+  check_thread.start()
+
   api.start()
   
-  thread.join()
+  main_thread.join()
