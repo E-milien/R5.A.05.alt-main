@@ -1,109 +1,165 @@
 import os
+import time
 from dotenv import load_dotenv
-from random import randint, choice
+from random import randint, choice, random
 import requests
 from server.actions import ActionType
 
-load_dotenv() 
+load_dotenv()
 
 class Agent:
-  API_URL = os.environ.get("API_URL", "http://127.0.0.1:5000")
+    API_URL = os.environ.get("API_URL", "http://127.0.0.1:5000")
 
-  def __init__(self, auto = True) -> None:
-    self.auto = auto
-    if auto:
-    
-      listStats = [0,0,0,0]
-      
-      for i in range(20):
-        randNum = randint(0,3)
-        listStats[randNum]+=1
-      
-      self.life, self.strength, self.armor, self.speed = listStats
-      
-    else :    
-      while self.life + self.strength + self.armor + self.speed != 20:
-        self.life = int(input("life :"))
-        self.strength = int(input("strength :"))
-        self.armor = int(input("armor :"))
-        self.speed = int(input("speed :"))
-        if self.life + self.strength + self.armor + self.speed != 20:
-          print("Le total n'est pas égal à 20. Veuillez réessayer.")
-          
-    self.character_id = str(randint(10000,99999))
-    response = requests.post(f"{self.API_URL}/characters/{self.character_id}/join", json = {
-      'life':self.life,
-      'strength':self.strength,
-      'armor':self.armor,
-      'speed':self.speed
-    })
-    
-    
+    def __init__(self, stats=None) -> None:
+        # Génère les statistiques soit de manière aléatoire soit via des gènes passés
+        
+        self.left = False
+        
+        if stats:
+            self.life, self.strength, self.armor, self.speed = stats
+        else:
+            listStats = [0, 0, 0, 0]
+            for _ in range(200):
+                randNum = randint(0, 3)
+                listStats[randNum] += 1
+            self.life, self.strength, self.armor, self.speed = listStats
 
-  def do_action(self):
-    x = requests.get(f"{self.API_URL}/characters/{self.character_id}")
-    print(f"{self.character_id} is {'dead' if x.json()['is_dead'] else 'alive'}")  
+        self.character_id = str(randint(10000, 99999))
+        response = requests.post(f"{self.API_URL}/characters/{self.character_id}/join", json={
+            'life': self.life,
+            'strength': self.strength,
+            'armor': self.armor,
+            'speed': self.speed
+        })
+    
+    def is_dead(self):
+        response = requests.get(f"{self.API_URL}/characters/{self.character_id}")
+        data = response.json()
+        
+        return data["is_dead"]
+        
+    def leave(self):
+        requests.delete(f"{self.API_URL}/characters/{self.character_id}/leave")
+        self.left = True
+
+    def fitness(self):
+        # Calcul de la "fitness" (survie + dégâts infligés)
+        response = requests.get(f"{self.API_URL}/characters/{self.character_id}")
+        data = response.json()
+        return data.get('damage_dealt', 0) - data.get('damage_taken', 0)
+
+    def do_action(self):
+        action = ActionType(randint(0, 2))
+        responseCharacters = requests.get(f"{self.API_URL}/characters")
+        listCharacters = responseCharacters.json()
+
+        # Choisir une cible différente de soi-même
+        target_id = self.character_id
+        while target_id == self.character_id:
+            target_id = listCharacters[randint(0, len(listCharacters) - 1)]['id']
+
+        responseAction = requests.post(f"{self.API_URL}/characters/{self.character_id}/action", json={
+            'type': action.name,
+            'target': target_id
+        })
+
+        return responseAction.status_code
+
+
+class GeneticAlgorithm:
+    def __init__(self, population_size=10, generations=10, mutation_rate=0.1):
+        self.population_size = population_size
+        self.generations = generations
+        self.mutation_rate = mutation_rate
+
+    def initialize_population(self):
+        return [Agent() for _ in range(self.population_size)]
+
+    def mutate(self, stats):
+        # Applique une mutation sur les gènes (stats)
+        mutated_stats = stats[:]
+        if random() < self.mutation_rate:
+            index = randint(0, 3)
+            adjustment = randint(-2, 2)
+            mutated_stats[index] = max(0, mutated_stats[index] + adjustment)
+            total = sum(mutated_stats)
+            for i in range(len(mutated_stats)):
+                mutated_stats[i] = round(mutated_stats[i] * 20 / total)
+        return mutated_stats
+
+    def crossover(self, parent1, parent2):
+        # Combine les stats de deux parents
+        child_stats = [(parent1[i] + parent2[i]) // 2 for i in range(4)]
+        return child_stats
+
+    def evolve(self):
+        # Initialisation
+        population = self.initialize_population()
+
+        for generation in range(self.generations):
+            lap, _ = state()
+            is_finished = False
+            print(f"Generation {generation + 1}/{self.generations}")
+            while not is_finished:
+                # Évaluation de la fitness
+                fitness_scores = []
+                for agent in population:
+                    if not agent.left and agent.is_dead():
+                        agent.leave()
+                        pass
+                    
+                    agent.do_action()  # Simule l'action
+                    fitness_scores.append((agent.fitness(), agent))
+                    
+                while True:
+                    time.sleep(.01)
+                    currentLap, is_finished = state()
+                    if currentLap > lap:
+                        break
             
-    if self.auto:
-      action = choice(list(ActionType))
-      responseCharacters = requests.get(f"{self.API_URL}/characters")
-      listCharacters = responseCharacters.json()
-      target_id = self.character_id
-      
-      while(target_id == self.character_id):
-        target_id = listCharacters[randint(0,len(listCharacters)-1)]['id']
-        
-      responseAction = requests.post(f"{self.API_URL}/characters/{self.character_id}/action", json = {
-        'type':action.name,
-        'target':target_id
-      })
-    else:
-      inputAction = int(input("Choisissez une action HIT: 0, BLOCK: 1, DODGE: 2, FLY: 3: "))
-      action = ActionType(inputAction)
+                print(is_finished)
+            
+                print("prochain tour")
 
-      responseCharacters = requests.get(f"{self.API_URL}/characters")
-      response_data = responseCharacters.json()
+            for agent in population:
+                if not agent.left:
+                    agent.leave()
 
-      id_list = [item['id'] for item in response_data if item['id'] != self.character_id]
-      print("Liste des ids disponibles :")
-      print(id_list)
+            # Sélection des meilleurs
+            fitness_scores.sort(reverse=True, key=lambda x: x[0])
+            survivors = fitness_scores[:self.population_size // 2]
 
-      target_id = None
+            # Reproduction
+            next_population = []
+            for i in range(len(survivors)):
+                for j in range(i + 1, len(survivors)):
+                    parent1 = survivors[i][1]
+                    parent2 = survivors[j][1]
+                    child_stats = self.crossover(
+                        [parent1.life, parent1.strength, parent1.armor, parent1.speed],
+                        [parent2.life, parent2.strength, parent2.armor, parent2.speed]
+                    )
+                    child_stats = self.mutate(child_stats)
+                    next_population.append(Agent(child_stats))
 
-      while target_id not in id_list:
-        target_id = input("Entrez un id cible parmi ceux affichés : ")
-        if target_id not in id_list:
-            print(f"L'id {target_id} n'est pas valide. Veuillez réessayer.")
-        
-      responseAction = requests.post(f"{self.API_URL}/characters/{self.character_id}/action", json = {
-        'type':action.name,
-        'target':target_id
-      })
-    
-    return responseAction.status_code
+            # Remplissage de la population
+            while len(next_population) < self.population_size:
+                next_population.append(Agent())
 
-def play(auto = True):
-  if auto:
-    perso1 = Agent()
-    perso2 = Agent()
+            population = next_population
 
-    while True:
-      perso1.do_action()
-      perso2.do_action()
-      x = requests.get('http://127.0.0.1:5000/state')
-      print(x.text)
-      input("fin du tour")
-      
-  else:
-    listPlayer = []
-    numPlayer = int(input("nombre d'agent :"))
-    for i in range(0,numPlayer):
-      listPlayer.append(Agent(False))
-    
-    for y in listPlayer:
-      y.do_action()
+        # Retour des meilleurs agents après toutes les générations
+        return sorted(population, key=lambda agent: agent.fitness(), reverse=True)
 
-play(True)
+def state():
+    reponse = requests.get("http://127.0.0.1:5000/state")
+    result = reponse.json()
+    return result['turn'], result['is_finished']
 
-x = requests.get('http://127.0.0.1:5000/state')
-print(x.text)
+if __name__ == "__main__":
+    ga = GeneticAlgorithm(population_size=10, generations=100, mutation_rate=0.1)
+    best_agents = ga.evolve()
+
+    print("Best agent stats:")
+    for agent in best_agents[:3]:
+        print(f"Life: {agent.life}, Strength: {agent.strength}, Armor: {agent.armor}, Speed: {agent.speed}")
