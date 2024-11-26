@@ -63,8 +63,7 @@ class Arena:
 
   def exec(self) -> None:
     self.turn += 1
-    characters = sorted(self.characters, key = lambda character: character.statistics.speed)
-
+    characters = sorted(self.characters, key=lambda character: character.statistics.speed, reverse=True)
     print("Run turn", self.turn)
     print("Characters count is", len(characters))
 
