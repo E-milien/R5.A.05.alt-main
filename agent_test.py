@@ -24,7 +24,7 @@ class Agent(BaseAgent):
     return ActionType.HIT, target_id
   
   def next_turn(self, turn_id):
-    print(turn_id, self.id, self.is_dead, self.cu)
+    print(turn_id, self.id, self.is_dead, self.current)
 
   def finished(self):
     print('GAME IS FINISHED')

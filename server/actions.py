@@ -54,7 +54,7 @@ class Action:
 
     if target.is_dead():
       arena.metrics.push_metric('kill', arena.id, { 'source': source.id })
-      arena.metrics.push_metric('gold_reward', arena.id, { 'source': source.id })
+      arena.metrics.push_metric('gold_reward', arena.id, { 'value': 10, 'source': source.id })
     
   def to_dict(self):
     return {

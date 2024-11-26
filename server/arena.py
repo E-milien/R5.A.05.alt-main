@@ -58,6 +58,13 @@ class Arena:
     self.is_started = False
     
   def push_metrics(self) -> None:
+    self.metrics.push_metric("state", self.id, { 
+      "turn": self.turn,
+      "total": len(self.characters),
+      "death": len(self.get_characters_dead()),
+      "alive": len(self.get_characters_alive())
+    })
+
     for character in [character.to_dict() for character in self.characters]:
       self.metrics.push_metric("character", self.id, character)
 
