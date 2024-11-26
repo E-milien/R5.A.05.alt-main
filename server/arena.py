@@ -83,11 +83,11 @@ class Arena:
   def main_loop(self) -> None:
     while True:
       time.sleep(.5)
+      
+      if not self.is_started and self.has_required_number_of_characters():
+        self.is_started = True
 
       if self.is_ready():
-        if not self.is_started:
-          self.is_started = True
-
         self.exec()
         self.push_metrics()
 
