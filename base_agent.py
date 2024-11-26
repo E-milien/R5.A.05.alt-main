@@ -19,14 +19,14 @@ class BaseAgent:
     self.is_dead = False
 
     self.base = {
-      "life": life,
+      "life": life * 2,
       "strength": strength,
       "armor": armor,
       "speed": speed
     }
 
     self.current = {
-      "life": life,
+      "life": life * 2,
       "strength": strength,
       "armor": armor,
       "speed": speed

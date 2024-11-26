@@ -4,7 +4,7 @@ from aggressive_agent import AggressiveAgent
 from defensive_agent import DefensiveAgent
 
 def run_game():
-    NB_GAMES = 10
+    NB_GAMES = 1000
     increment = 0
     while increment < NB_GAMES:
         print(f"Génération {increment + 1}")
@@ -25,8 +25,6 @@ def run_game():
                 break                
             else:
                 time.sleep(0.5)
-
-        
 
 # Lancer le jeu
 if __name__ == "__main__":
