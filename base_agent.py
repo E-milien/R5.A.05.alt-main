@@ -12,6 +12,7 @@ ARENAS = {
 
 class BaseAgent:
   def __init__(self, id: str, life: int, strength: int, armor: int, speed: int):
+    self.is_ended = False
     self.id = id
 
     self.arena_url = None
@@ -30,9 +31,6 @@ class BaseAgent:
       "armor": armor,
       "speed": speed
     }
-    
-    self.thread = Thread(target = self.loop)
-    self.thread.daemon = True
 
     self.game_run = False
 
@@ -59,14 +57,20 @@ class BaseAgent:
 
     return response.json()
   
-  def join(self, arena_id: str):
-    url = ARENAS[arena_id]
+  def join(self, arena_id: str = None):
+    if not arena_id:
+      url = list(ARENAS.values())[randint(0, len(ARENAS) - 1)]
+    else:
+      url = ARENAS[arena_id]
 
     response = requests.post(f"{url}/characters/{self.id}/join", json = self.base)
     if response.status_code != 200:
       raise Exception("Error while joining the arena")
     
     self.arena_url = url
+    
+    self.thread = Thread(target = self.loop)
+    self.thread.daemon = True
     self.thread.start()
 
   def leave(self):
@@ -85,10 +89,10 @@ class BaseAgent:
       raise Exception("Error while updating character")
 
     json = response.json()
-
+    
     self.is_dead = json['is_dead']
     self.current = json['statistics']
-
+      
     return True
   
   def do_action(self):
@@ -97,6 +101,9 @@ class BaseAgent:
   def next_turn(self):
     pass
 
+  def death(self, turn):
+    pass
+    
   def finished(self):
     pass
 
@@ -124,10 +131,16 @@ class BaseAgent:
       if last_turn != turn:
         last_turn = turn
 
-        self.update()
-        self.next_turn(turn)
+        if not self.is_dead:
+          self.update()
+          
+          if self.is_dead:
+            self.death(turn)
+          else:
+            self.next_turn(turn)
 
         if state['is_finished']:
+          self.is_ended = True
           self.finished()
           self.leave()
         else:
