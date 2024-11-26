@@ -19,7 +19,7 @@ class Agent:
             self.life, self.strength, self.armor, self.speed = stats
         else:
             listStats = [0, 0, 0, 0]
-            for _ in range(200):
+            for _ in range(20):
                 randNum = randint(0, 3)
                 listStats[randNum] += 1
             self.life, self.strength, self.armor, self.speed = listStats
@@ -116,10 +116,6 @@ class GeneticAlgorithm:
                     currentLap, is_finished = state()
                     if currentLap > lap:
                         break
-            
-                print(is_finished)
-            
-                print("prochain tour")
 
             for agent in population:
                 if not agent.left:
@@ -157,7 +153,7 @@ def state():
     return result['turn'], result['is_finished']
 
 if __name__ == "__main__":
-    ga = GeneticAlgorithm(population_size=10, generations=100, mutation_rate=0.1)
+    ga = GeneticAlgorithm(population_size=10, generations=10, mutation_rate=0.1)
     best_agents = ga.evolve()
 
     print("Best agent stats:")

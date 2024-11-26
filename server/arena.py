@@ -89,7 +89,7 @@ class Arena:
     self.run = True
 
     while self.run:
-      time.sleep(.01)
+      time.sleep(.1)
 
       #self.update_metrics()
 
