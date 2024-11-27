@@ -30,8 +30,5 @@ def run_game():
             else:
                 time.sleep(0.5)
 
-        
-
-# Lancer le jeu
 if __name__ == "__main__":
     run_game()
