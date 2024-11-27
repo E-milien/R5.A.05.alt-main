@@ -13,10 +13,12 @@ class RandomAgent(BaseAgent):
 
     def do_action(self):
         characters_alive = self.get_characters_alive()
-
-        target = characters_alive[randint(0, len(characters_alive) - 1)]['id']
-        
-        action = ActionType(randint(0,2))
+        target = None
+        if len(characters_alive) >= 1:
+            target = characters_alive[randint(0, len(characters_alive) - 1)]['id']
+            action = ActionType(randint(0,2))
+        else:
+            action = ActionType(randint(1,2))
 
         return action, target
 

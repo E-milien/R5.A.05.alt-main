@@ -51,10 +51,10 @@ def consume_metric():
         Point("character")
           .tag("arena", arena)
           .tag("character", character['id'])
-          .field("life", statistics['life'])
-          .field("strength", statistics['strength'])
-          .field("armor", statistics['armor'])
-          .field("speed", statistics['speed'])
+          .field("life", float(statistics['life']))
+          .field("strength", float(statistics['strength']))
+          .field("armor", float(statistics['armor']))
+          .field("speed", float(statistics['speed']))
       )
 
       write_api.write(bucket, "iot", point)
@@ -75,17 +75,21 @@ def consume_metric():
 
     if metric == 'gold_reward':
       data = message['data']
+      source = data['source']
 
       if arena not in golds:
-        golds[arena] = 0
+        golds[arena] = {}
 
-      golds[arena] += data['value']
+      if source not in golds[arena]:
+        golds[arena][source] = 0
+
+      golds[arena][source] += data['value']
 
       point = (
         Point("golds")
           .tag("arena", arena)
-          .tag("source", data['source'])
-          .field("value", golds[arena])
+          .tag("source", source)
+          .field("value", golds[arena][source])
       )
 
       write_api.write(bucket, "iot", point)

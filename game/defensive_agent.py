@@ -4,12 +4,8 @@ from server.actions import ActionType
 
 class DefensiveAgent(BaseAgent):
     def __init__(self, id) -> None:
-        listStats = [1, 1, 1, 1]
-        for i in range(16):
-            randNum = randint(0, 3)
-            listStats[randNum] += 1
 
-        super().__init__(id, listStats[0], listStats[1], listStats[2], listStats[3])
+        super().__init__(id, 7, 3, 8, 2)
 
     def do_action(self):
         characters_alive = self.get_characters_alive()
@@ -28,7 +24,7 @@ class DefensiveAgent(BaseAgent):
             
             return ActionType.HIT, weakest_target
         
-        return ActionType.DODGE, None
+        return ActionType.BLOCK, None
 
     def next_turn(self, turn_id):
         print(f"Turn {turn_id}: Agent {self.id} stats - {self.current}")

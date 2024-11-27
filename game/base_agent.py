@@ -6,7 +6,7 @@ from server.actions import ActionType
 
 ARENAS = {
   'arena-1': 'http://10.109.150.143:5000',
-  'arena-2': 'http://10.109.150.143:5000'
+  'arena-2': 'http://10.109.150.138:5000'
 }
 
 class BaseAgent:
@@ -32,6 +32,8 @@ class BaseAgent:
     }
 
     self.game_run = False
+    
+    self.is_started = False
 
   def get_characters_alive(self):
     response = requests.get(f'{self.arena_url}/characters_alive')
@@ -128,6 +130,8 @@ class BaseAgent:
 
       state = self.state()
       turn = state['turn']
+      
+      self.is_started = state['is_started']
 
       if last_turn != turn:
         last_turn = turn

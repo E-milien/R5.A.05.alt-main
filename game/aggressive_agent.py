@@ -4,12 +4,7 @@ from server.actions import ActionType
 
 class AggressiveAgent(BaseAgent):
     def __init__(self, id) -> None:
-        listStats = [1, 1, 1, 1]
-        for i in range(16):
-            randNum = randint(0, 3)
-            listStats[randNum] += 1
-
-        super().__init__(id, listStats[0], listStats[1], listStats[2], listStats[3])
+        super().__init__(id, 4, 10, 1, 5)
 
     def do_action(self):
         characters_alive = self.get_characters_alive()
