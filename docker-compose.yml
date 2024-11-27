@@ -28,8 +28,13 @@ services:
       - ./prometheus:/etc/prometheus
 
   kafka-exporter:
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+
     image: danielqsj/kafka-exporter
-    command: [ "--kafka.server=kafka1:9092", "--kafka.server=kafka2:9093", "--kafka.server=kafka3:9094" ]
+    command: [ "--kafka.server=kafka1:9092", "--kafka.server=kafka2:9092", "--kafka.server=kafka3:9092", "--zookeeper.server=zookeeper:2181", "--group.filter='.+' " ]
     ports:
       - 9308:9308
 

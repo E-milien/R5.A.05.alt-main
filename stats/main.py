@@ -16,11 +16,13 @@ bucket = 'monitoring'
 token = os.environ.get('INFLUXDB_TOKEN')
 url = os.environ.get('INFLUXDB_URL')
 
+kafka_url = os.environ.get('KAFKA_URL')
+
 influx_client = InfluxDBClient(url, token, org="iot")
 write_api = influx_client.write_api(write_options=SYNCHRONOUS)
 
-consumer_event = KafkaConsumer('event', bootstrap_servers = ['localhost:29092'])
-consumer_metric = KafkaConsumer('metrics', bootstrap_servers = ['localhost:29092'])
+consumer_event = KafkaConsumer('event', bootstrap_servers = [kafka_url])
+consumer_metric = KafkaConsumer('metrics', bootstrap_servers = [kafka_url])
 
 print('KAFKA CONNECTION')
 

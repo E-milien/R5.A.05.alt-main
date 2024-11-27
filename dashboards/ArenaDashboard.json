@@ -354,7 +354,7 @@
       "pluginVersion": "11.3.1",
       "targets": [
         {
-          "query": "from(bucket: \"monitoring\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"golds\")\r\n  |> filter(fn: (r) => r[\"arena\"] == \"${arena}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> group(columns: [\"arena\"])\r\n  |> yield(name: \"mean\")",
+          "query": "from(bucket: \"monitoring\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"golds\")\r\n  |> filter(fn: (r) => r[\"arena\"] == \"${arena}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\r\n  |> last()\r\n  |> group(columns: [\"arena\"])\r\n  |> sum()\r\n  |> yield(name: \"sum\")",
           "refId": "A",
           "datasource": {
             "type": "influxdb",
@@ -682,13 +682,13 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Arena",
   "uid": "ae54e7prvycqof",
-  "version": 10,
+  "version": 16,
   "weekStart": ""
 }
