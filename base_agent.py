@@ -36,10 +36,12 @@ class BaseAgent:
 
   def get_characters_alive(self):
     response = requests.get(f'{self.arena_url}/characters_alive')
-    if response.status_code != 200:
+    
+    if response.status_code == 200:
+      result = response.json()
+      return list(filter(lambda character: character['id'] != self.id, result))
+    else:
       raise Exception("Error while getting characters alive")
-
-    return response.json()
 
   def action(self, action: ActionType, target_id: str):
     response = requests.post(f"{self.arena_url}/characters/{self.id}/action", json = {

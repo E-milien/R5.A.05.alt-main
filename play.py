@@ -2,6 +2,7 @@ import time
 from hit_and_run_agent import HitAndRunAgent
 from aggressive_agent import AggressiveAgent
 from defensive_agent import DefensiveAgent
+from random_agent import RandomAgent
 
 def run_game():
     NB_GAMES = 10
@@ -9,9 +10,12 @@ def run_game():
     while increment < NB_GAMES:
         print(f"Génération {increment + 1}")
         listAgent = []
-        listAgent.append(HitAndRunAgent('1'))
-        listAgent.append(AggressiveAgent('2'))
-        listAgent.append(DefensiveAgent('3'))
+        listAgent.append(HitAndRunAgent('hit&run 1'))
+        listAgent.append(AggressiveAgent('aggressive 1'))
+        listAgent.append(DefensiveAgent('defensive 1'))
+        listAgent.append(RandomAgent('random 1'))
+        listAgent.append(RandomAgent('random 2'))
+        listAgent.append(RandomAgent('random 3'))
         
         for agent in listAgent:
             agent.join('arena-1')
