@@ -15,12 +15,22 @@ class API:
     
     @self.app.route('/state', methods=['GET'])
     def get_current_state():
-      json = arena.to_dict()
+      json = arena.to_dict()['state']
       return jsonify(json)
     
     @self.app.route('/characters', methods=['GET'])
     def get_characters():
       json = arena.to_dict()['characters']
+      return jsonify(json)
+    
+    @self.app.route('/characters_alive', methods=['GET'])
+    def get_characters_alive():
+      json = arena.to_dict()['characters_alive']
+      return jsonify(json)
+    
+    @self.app.route('/characters_dead', methods=['GET'])
+    def get_characters_dead():
+      json = arena.to_dict()['characters_dead']
       return jsonify(json)
 
     @self.app.route('/characters/<character_id>', methods=['GET'])
@@ -45,9 +55,17 @@ class API:
       arena.add_character(character)
 
       return {}, 200
+    
+    @self.app.route('/characters/<character_id>/leave', methods=['POST'])
+    def character_leave(character_id: int):
+      arena.remove_character(character_id)
+      return {}, 200
 
     @self.app.route('/characters/<character_id>/action', methods=['POST'])
     def character_action(character_id: int):
+      if arena.is_finished():
+        return {}, 200
+
       data = request.json
 
       character = arena.get_character(character_id)
