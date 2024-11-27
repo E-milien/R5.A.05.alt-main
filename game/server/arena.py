@@ -101,6 +101,11 @@ class Arena:
     while True:
       time.sleep(.5)
 
+      if self.is_finished():
+        for character in self.get_characters_alive():
+          print(f'----------------------------{character.id}')
+          self.metrics.push_metric('gold_reward', arena.id, { 'value': 30, 'source': character.id })
+
       if self.is_finished() and len(self.characters) <= 0:
         self.reset()
 

@@ -37,7 +37,7 @@ class Action:
 
   def hit(self, arena, source, target) -> None:
     if target.action.type == ActionType.BLOCK:
-      reduce_damage = ( 1 - (target.statistics.armor / (target.statistics.armor + 8)) ) * source.statistics.strength
+      reduce_damage = ( 1 - (target.statistics.armor / (target.statistics.armor + 5)) ) * source.statistics.strength
       target.statistics.life -= reduce_damage
 
       return
