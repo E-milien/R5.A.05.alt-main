@@ -2,7 +2,7 @@ from random import randint
 from base_agent import BaseAgent
 from server.actions import ActionType
 
-class HitAndRunAgent(BaseAgent):
+class RandomAgent(BaseAgent):
     def __init__(self, id) -> None:
         listStats = [1, 1, 1, 1]
         for i in range(16):
@@ -14,20 +14,11 @@ class HitAndRunAgent(BaseAgent):
     def do_action(self):
         characters_alive = self.get_characters_alive()
 
-        weakest_target = None
-        lowest_life = float('inf')
-        for character in characters_alive:
-            if character['id'] != self.id and character['statistics']['life'] < lowest_life:
-                weakest_target = character['id']
-                lowest_life = character['statistics']['life']
+        target = characters_alive[randint(0, len(characters_alive) - 1)]['id']
+        
+        action = ActionType(randint(0,2))
 
-        if not weakest_target:
-            weakest_target = characters_alive[randint(0, len(characters_alive) - 1)]['id']
-
-        if self.current["life"] < 5:
-            return ActionType.HIT, weakest_target
-        else:
-            return ActionType.DODGE, None
+        return action, target
 
     def next_turn(self, turn_id):
         print(f"Turn {turn_id}: Agent {self.id} stats - {self.current}")
