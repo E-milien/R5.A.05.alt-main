@@ -5,9 +5,8 @@ from threading import Thread
 from server.actions import ActionType
 
 ARENAS = {
-  'arena-1': 'http://127.0.0.1:5000',
-  'arena-2': 'http://127.0.0.1:5000',
-  'arena-3': 'http://127.0.0.1:5000',
+  'arena-1': 'http://10.109.150.143:5000',
+  'arena-2': 'http://10.109.150.143:5000'
 }
 
 class BaseAgent:
